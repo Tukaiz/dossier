@@ -45,7 +45,10 @@ module Dossier
       include ViewContextWithReportFormatter
 
       attr_reader :report
-      config.cache_store = ActionController::Base.cache_store
+
+      ActiveSupport.on_load(:action_controller) do
+        config.cache_store = ActionController::Base.cache_store
+      end
 
       layout 'dossier/layouts/application'
 
@@ -58,7 +61,7 @@ module Dossier
         Module.new do
           include Rails.application.helpers
           include Rails.application.routes.url_helpers
-          
+
           def default_url_options
             {}
           end
