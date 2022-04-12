@@ -10,7 +10,11 @@ module Dossier
     end
 
     def adapter
-      @adapter ||= dossier_adapter.new(self.options.except(:dossier_adapter))
+      # This is a little hacky, but since this is our gem now we can afford to
+      # be a little hacky. It assumes that if the database.yml is 3 tiers deep,
+      # the primary DB will have the key 'primary'
+      primary = self.options[:primary] || self.options
+      @adapter ||= dossier_adapter.new(primary.except(:dossier_adapter))
     end
 
     def dossier_adapter
