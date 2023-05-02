@@ -17,8 +17,3 @@ gem 'coveralls', require: false
 
 # test unit removed from stdlib in ruby 2.2.0
 gem 'test-unit' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.2.0')
-
-group :development, :test do
-  gem 'pry-rails', '~> 0.3.6'
-  gem 'pry-nav', '~> 1.0.0'
-end

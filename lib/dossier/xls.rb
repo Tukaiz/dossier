@@ -1,9 +1,7 @@
 module Dossier
   class Xls
-
-
     def initialize(opts = {})
-      @headers    = opts[:headers] || opts[:collection].shift
+      @headers    = opts[:headers] || collection_hash_to_headers(opts[:collection])
       @collection = opts[:collection]
       xls_xml_styles = opts[:xls_xml_styles]
       xls_xml_column_tags = opts[:xls_xml_column_tags]
@@ -20,13 +18,19 @@ module Dossier
 
     private
 
-    def as_cell(el)
-      %{<Cell><Data ss:Type="String">#{el}</Data></Cell>}
+    def as_cell(column, value)
+      %{<Cell><Data ss:Type="#{xls_cell_format(column)}">#{value}</Data></Cell>}
     end
 
     def as_row(array)
-      my_array = array.map{|a| as_cell(a)}.join("\n")
+      my_array = array.map { |column, value| as_cell(column, value) }.join("\n")
+
       "<Row>\n" + my_array + "\n</Row>\n"
+    end
+
+    def collection_hash_to_headers(collection_hash)
+      # :z_header_column is just a fake key value which should never match an actual report column
+      collection_hash.first.map { |key, _value| { z_header_column: key } }
     end
   end
 end

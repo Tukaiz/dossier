@@ -79,6 +79,11 @@ module Dossier
       ""
     end
 
+    # Possible XLS cell formats: Number, DateTime, Boolean, String, Error
+    def xls_cell_format(column)
+      'String'
+    end
+
     delegate :render, to: :renderer
 
     private
