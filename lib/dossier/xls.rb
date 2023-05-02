@@ -23,15 +23,16 @@ module Dossier
       %{<Cell><Data ss:Type="#{@report.xls_cell_format(column)}">#{value}</Data></Cell>}
     end
 
-    def as_row(array)
-      my_array = array.map { |column, value| as_cell(column, value) }.join("\n")
+    def as_row(hash)
+      my_array = hash.map { |column, value| as_cell(column, value) }.join("\n")
 
       "<Row>\n" + my_array + "\n</Row>\n"
     end
 
     def collection_hash_to_headers(collection_hash)
-      # :z_header_column is just a fake key value which should never match an actual report column
-      collection_hash.first.map { |key, _value| { z_header_column: key } }
+      columns = collection_hash.first.keys
+      # creates a hash where the keys are the column names with a z prepended so it doesn't match any xls_cell_formats
+      Hash[columns.map { |name| "z#{name}" }.zip(columns)]
     end
   end
 end
