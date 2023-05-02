@@ -1,10 +1,11 @@
 module Dossier
   class Xls
     def initialize(opts = {})
+      @report     = opts[:report]
       @headers    = opts[:headers] || collection_hash_to_headers(opts[:collection])
       @collection = opts[:collection]
-      xls_xml_styles = opts[:xls_xml_styles]
-      xls_xml_column_tags = opts[:xls_xml_column_tags]
+      xls_xml_styles = @report.xls_xml_styles
+      xls_xml_column_tags = @report.xls_xml_column_tags
       @xml_header = %Q{<?xml version="1.0" encoding="UTF-8"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40">\n#{xls_xml_styles}<Worksheet ss:Name="Sheet1">\n<Table>\n#{xls_xml_column_tags}}
       @xml_footer = %Q{</Table>\n</Worksheet>\n</Workbook>\n}
     end
@@ -19,7 +20,7 @@ module Dossier
     private
 
     def as_cell(column, value)
-      %{<Cell><Data ss:Type="#{xls_cell_format(column)}">#{value}</Data></Cell>}
+      %{<Cell><Data ss:Type="#{@report.xls_cell_format(column)}">#{value}</Data></Cell>}
     end
 
     def as_row(array)

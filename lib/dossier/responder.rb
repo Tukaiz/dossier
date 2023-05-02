@@ -26,9 +26,7 @@ module Dossier
       controller.headers['Content-Type'] = 'application/vnd.ms-excel'
       # TUKAIZ NOTE: This originally used report.raw_results.arrays, which does not run the
       # formatters and display column logic. It is changed here, but in future it might be an issue
-      controller.response_body = Xls.new(collection: report.results.hashes,
-                                         xls_xml_styles: report.xls_xml_styles,
-                                         xls_xml_column_tags: report.xls_xml_column_tags)
+      controller.response_body = Xls.new(collection: report.results.hashes, report: report)
     end
 
     def respond
