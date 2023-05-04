@@ -1,12 +1,11 @@
 module Dossier
   class Xls
-
-
     def initialize(opts = {})
-      @headers    = opts[:headers] || opts[:collection].shift
+      @report     = opts[:report]
+      @headers    = opts[:headers] || collection_hash_to_headers(opts[:collection])
       @collection = opts[:collection]
-      xls_xml_styles = opts[:xls_xml_styles]
-      xls_xml_column_tags = opts[:xls_xml_column_tags]
+      xls_xml_styles = @report.xls_xml_styles
+      xls_xml_column_tags = @report.xls_xml_column_tags
       @xml_header = %Q{<?xml version="1.0" encoding="UTF-8"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40">\n#{xls_xml_styles}<Worksheet ss:Name="Sheet1">\n<Table>\n#{xls_xml_column_tags}}
       @xml_footer = %Q{</Table>\n</Worksheet>\n</Workbook>\n}
     end
@@ -20,13 +19,20 @@ module Dossier
 
     private
 
-    def as_cell(el)
-      %{<Cell><Data ss:Type="String">#{el}</Data></Cell>}
+    def as_cell(column, value)
+      %{<Cell><Data ss:Type="#{@report.xls_cell_format(column)}">#{value}</Data></Cell>}
     end
 
-    def as_row(array)
-      my_array = array.map{|a| as_cell(a)}.join("\n")
+    def as_row(hash)
+      my_array = hash.map { |column, value| as_cell(column, value) }.join("\n")
+
       "<Row>\n" + my_array + "\n</Row>\n"
+    end
+
+    def collection_hash_to_headers(collection_hash)
+      columns = collection_hash.first.keys
+      # creates a hash where the keys are the column names with a z prepended so it doesn't match any xls_cell_formats
+      Hash[columns.map { |name| "z#{name}" }.zip(columns)]
     end
   end
 end

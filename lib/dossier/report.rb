@@ -79,6 +79,12 @@ module Dossier
       ""
     end
 
+    # Possible XLS cell formats: Number, DateTime, Boolean, String, Error
+    # Override this method in your report class to set specific cells
+    def xls_cell_format(column)
+      'String'
+    end
+
     delegate :render, to: :renderer
 
     private
