@@ -9,10 +9,12 @@ module Dossier
     attr_accessor :config_path, :client
 
     def initialize
-      @config_path = Rails.root.join('config', 'dossier.yml')
+      # read directly from the BS2 database config, which we are simply copying to dossier.yml in production anyway
+      # @config_path = Rails.root.join('config', 'dossier.yml')
+      @config_path = Rails.root.join('config', 'database.yml')
       setup_client!
     end
-   
+
     def connection_options
       yaml_config.merge(dburl_config || {}).presence || raise_empty_conn_config
     end
@@ -22,7 +24,7 @@ module Dossier
     rescue Errno::ENOENT
       {}
     end
-   
+
     def dburl_config
       Dossier::ConnectionUrl.new.to_hash if ENV.has_key? DB_KEY
     end
